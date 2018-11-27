@@ -423,27 +423,32 @@ angular.module('ngCordova.plugins.backgroundGeolocation', [])
 
     return {
 
-      init: function () {
-        $window.navigator.geolocation.getCurrentPosition(function (location) {
-          return location;
-        });
-      },
-
       configure: function (options) {
 
-        this.init();
         var q = $q.defer();
 
-        $window.plugins.backgroundGeoLocation.configure(
+        $window.BackgroundGeolocation.configure(options,
           function (result) {
             q.notify(result);
-            $window.plugins.backgroundGeoLocation.finish();
           },
           function (err) {
             q.reject(err);
-          }, options);
+          });
 
-        this.start();
+        return q.promise;
+      },
+
+      setConfig: function (options) {
+
+        var q = $q.defer();
+
+        $window.BackgroundGeolocation.setConfig(options,
+          function (result) {
+            q.notify(result);
+          },
+          function (err) {
+            q.reject(err);
+          });
 
         return q.promise;
       },
@@ -451,7 +456,7 @@ angular.module('ngCordova.plugins.backgroundGeolocation', [])
       start: function () {
         var q = $q.defer();
 
-        $window.plugins.backgroundGeoLocation.start(
+        $window.BackgroundGeolocation.start(
           function (result) {
             q.resolve(result);
           },
@@ -465,7 +470,7 @@ angular.module('ngCordova.plugins.backgroundGeolocation', [])
       stop: function () {
         var q = $q.defer();
 
-        $window.plugins.backgroundGeoLocation.stop(
+        $window.BackgroundGeolocation.stop(
           function (result) {
             q.resolve(result);
           },
@@ -474,6 +479,20 @@ angular.module('ngCordova.plugins.backgroundGeolocation', [])
           });
 
         return q.promise;
+      },
+
+      getCurrentPosition: function (options) {
+        var q = $q.defer();
+        $window.BackgroundGeolocation.getCurrentPosition(
+          function (result) {
+            q.resolve(result);
+          },
+          function (err) {
+            q.reject(err);
+          }, options);
+
+        return q.promise;
+                
       }
     };
   }
